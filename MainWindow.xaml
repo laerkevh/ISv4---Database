@@ -1,0 +1,68 @@
+<Window x:Class="InventorySystemWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Inventory System" Height="520" Width="900">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Inventory System — Queued vs. Processed Orders" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Queued Orders -->
+            <GroupBox Header="Queued Orders">
+                <DataGrid ItemsSource="{Binding OrderBook.QueuedOrders}" AutoGenerateColumns="False" IsReadOnly="True" Margin="6" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*" />
+                        <DataGridTextColumn Header="Lines" Binding="{Binding OrderLines.Count}" Width="Auto"/>
+                        <DataGridTextColumn Header="Total" Binding="{Binding Path=., Converter={StaticResource OrderTotalConverter}}" Width="Auto"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <Button Content="Process Next →" Padding="12,8" Click="OnProcessNext"/>
+            </StackPanel>
+
+            <!-- Processed Orders -->
+            <GroupBox Grid.Column="2" Header="Processed Orders">
+                <DataGrid ItemsSource="{Binding OrderBook.ProcessedOrders}" AutoGenerateColumns="False" IsReadOnly="True" Margin="6" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*" />
+                        <DataGridTextColumn Header="Lines" Binding="{Binding OrderLines.Count}" Width="Auto"/>
+                        <DataGridTextColumn Header="Total" Binding="{Binding Path=., Converter={StaticResource OrderTotalConverter}}" Width="Auto"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+
+        <DockPanel Grid.Row="2" Margin="0,8,0,0">
+            <TextBlock Text="Total Revenue:" FontSize="16" FontWeight="SemiBold" Margin="0,0,8,0"/>
+            <TextBlock Text="{Binding OrderBook.TotalRevenue, StringFormat=C}" FontSize="16" />
+            <Separator Margin="16,0,16,0" Width="24"/>
+            <TextBlock Text="Low stock (below 5):" FontWeight="SemiBold" Margin="0,0,8,0"/>
+            <ItemsControl ItemsSource="{Binding LowStockPreview}" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="4,0" Padding="6,2" BorderBrush="#DDD" BorderThickness="1" CornerRadius="4">
+                            <TextBlock>
+                                <Run Text="{Binding Item.Name}"/>
+                                <Run Text=": "/>
+                                <Run Text="{Binding Quantity}"/>
+                            </TextBlock>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DockPanel>
+    </Grid>
+</Window>
